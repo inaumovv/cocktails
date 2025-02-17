@@ -9,4 +9,5 @@ router.register(r'', PromoAdminViewSet, basename='admin-promo')
 urlpatterns = [
     path('', include(router.urls)),
     path('<int:id>/purchased/',  PromoPurchasedAdminView.as_view(), name='admin-promo-purchased'),
+    path('purchased/<int:id>/',  PromoPurchasedAdminView.as_view(), name='admin-promo-purchased-delete'),
 ]

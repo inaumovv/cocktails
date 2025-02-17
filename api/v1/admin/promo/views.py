@@ -75,20 +75,16 @@ class PromoPurchasedAdminView(APIView):
         serializer = AdminPurchasedPromoSerializer(purchased_promo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, id, *args, **kwargs):
-        """
-        Удаляет купленный промокод по promo_id и user_id.
-        """
-        user_id = request.data.get('user_id')
 
+class PromoDeletePurchasedAdminView(APIView):
+    permission_classes = [IsActiveUser, DjangoModelPermissions]
+    queryset = PurchasedPromo.objects.all()
+
+    def delete(self, request, id, *args, **kwargs):
         try:
-            purchased_promo = PurchasedPromo.objects.get(promo_id=id, user_id=user_id)
+            purchased_promo = PurchasedPromo.objects.get(id=id)
         except PurchasedPromo.DoesNotExist:
             return Response({"error": "Purchased promo not found"}, status=status.HTTP_404_NOT_FOUND)
 
         purchased_promo.delete()
         return Response({"message": "Purchased promo deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-
-
-
-
