@@ -19,6 +19,7 @@ class AdminUserSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'email',
+            'os',
             'is_staff',
             'date_of_birth',
             'password',
@@ -44,6 +45,7 @@ class AdminUserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'email',
+            'os',
             'is_staff',
             'date_of_birth',
             'password',
@@ -74,6 +76,7 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
         fields = [
             'email',
             'is_staff',
+            'os',
             'date_of_birth',
             'password',
             'first_name',

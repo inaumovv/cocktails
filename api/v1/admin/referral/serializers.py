@@ -3,7 +3,7 @@ from rest_framework import serializers
 from apps.user.models import Referral, User
 
 
-class ReferralSerializer(serializers.ModelSerializer):
+class AdminReferralSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
 
     def validate_user(self, value):
@@ -18,8 +18,8 @@ class ReferralSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'code', 'code_applying']
 
 
-class UserReferralSerializer(serializers.ModelSerializer):
-    ref_code = ReferralSerializer(read_only=True, many=False)
+class AdminUserReferralSerializer(serializers.ModelSerializer):
+    ref_code = AdminReferralSerializer(read_only=True, many=False)
 
     class Meta:
         model = User

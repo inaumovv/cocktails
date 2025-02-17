@@ -5,7 +5,7 @@ from rest_framework.permissions import DjangoModelPermissions
 
 from api.base.permissions import IsActiveUser
 from api.v1.admin.referral.filters import ReferralFilter
-from api.v1.admin.referral.serializers import UserReferralSerializer, ReferralSerializer
+from api.v1.admin.referral.serializers import AdminUserReferralSerializer, AdminReferralSerializer
 from apps.user.models import User
 from base.pagination import BasePagination
 
@@ -17,7 +17,7 @@ class ReferralAdminViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
-    serializer_class = UserReferralSerializer
+    serializer_class = AdminUserReferralSerializer
     permission_classes = [IsActiveUser, DjangoModelPermissions]
     queryset = User.objects.all()
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
@@ -26,6 +26,6 @@ class ReferralAdminViewSet(
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
-            return ReferralSerializer
+            return AdminReferralSerializer
         return super().get_serializer_class()
 
