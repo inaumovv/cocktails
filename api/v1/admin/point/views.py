@@ -1,4 +1,5 @@
 import django_filters
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
@@ -10,6 +11,7 @@ from apps.user.models import User
 from base.pagination import BasePagination
 from .filters import PointFilter
 from .serializers import AdminPointUserSerializer, AdminCreatePointUserSerializer, AdminPointConfigSerializer
+from .swagger import points_create
 
 
 class AdminPointViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, GenericViewSet):
@@ -20,10 +22,10 @@ class AdminPointViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, GenericV
     pagination_class = BasePagination
     permission_classes = [IsActiveUser, DjangoModelPermissions]
 
+    @swagger_auto_schema(**points_create)
     def create(self, request, *args, **kwargs):
         serializer = AdminCreatePointUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
