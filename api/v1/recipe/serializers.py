@@ -69,10 +69,10 @@ class SelectionRecipeSerializer(serializers.ModelSerializer):
     def get_ingredients(self, obj):
         recipe_ingredients = RecipeIngredient.objects.filter(recipe=obj)
         return RecipeIngredientSerializer(recipe_ingredients, many=True).data
-    
+
     def get_missing_ingredients(self, obj):
         return getattr(obj, 'missing_ingredients', [])
-    
+
     def get_missing_ingredients_count(self, obj):
         return getattr(obj, 'missing_ingredients_count', 0)
 

@@ -1,12 +1,15 @@
-from apps.user.models import User
-from apps.recipe.models import *
-from .serializers import AdminUserSerializer, AdminUserListSerializer, AdminUserUpdateSerializer, AdminUserCreateSerializer
-from api.base.permissions import IsActiveUser
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.permissions import AllowAny
+import django_filters
 from rest_framework import mixins
-from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import BasePagination
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
+from api.base.permissions import IsActiveUser
+from apps.user.models import User
+from .filters import ProfileFilter
+from .serializers import AdminUserSerializer, AdminUserUpdateSerializer, AdminUserCreateSerializer
 
 
 class AdminUserViewSet(mixins.CreateModelMixin,
@@ -16,11 +19,13 @@ class AdminUserViewSet(mixins.CreateModelMixin,
                        mixins.DestroyModelMixin,
                        GenericViewSet):
     serializer_class = AdminUserSerializer
-    permission_classes = [IsActiveUser]
+    permission_classes = [IsActiveUser, DjangoModelPermissions]
     queryset = User.objects.all()
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = ProfileFilter
+    pagination_class = BasePagination
 
     def list(self, request, *args, **kwargs):
-        self.serializer_class = AdminUserListSerializer
         return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):

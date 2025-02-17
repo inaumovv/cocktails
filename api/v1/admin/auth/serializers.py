@@ -7,6 +7,7 @@ __all__ = [
     'AdminUserSerializer',
 ]
 
+
 class AdminWebSignInRequestSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     password = serializers.CharField(max_length=128)
@@ -26,6 +27,9 @@ class AdminWebSignInRequestSerializer(serializers.Serializer):
 
         if not self.user.is_active:
             raise serializers.ValidationError({'errors': ['Your account has been deactivated by the administrator.']})
+
+        if not self.user.is_staff:
+            raise serializers.ValidationError({'errors': ['Not enough rights']})
 
         return attrs
 

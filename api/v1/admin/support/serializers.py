@@ -1,10 +1,18 @@
 from rest_framework import serializers
 from apps.channel.models import Ticket
-from api.v1.admin.profile.serializers import AdminUserListSerializer
 
 __all__ = [
     'AdminTicketListSerializer',
+    'AdminUserListSerializer'
 ]
+
+from apps.user.models import User
+
+
+class AdminUserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'phone', 'avatar']
 
 
 class AdminTicketListSerializer(serializers.ModelSerializer):
@@ -12,4 +20,5 @@ class AdminTicketListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = '__all__'
+        fields = ['id', 'user', 'subject', 'description', 'status', 'created_at']
+        read_only_fields = ['user', 'subject', 'description', 'created_at']

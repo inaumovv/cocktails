@@ -1,6 +1,12 @@
 from django.contrib import admin
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+
 from apps.common.models import *
 from base.admin import BaseAdmin
+
+admin.site.register(Permission)
+admin.site.register(ContentType)
 
 
 @admin.register(Ads)
@@ -30,7 +36,7 @@ class DocumentAdmin(BaseAdmin):
 @admin.register(Config)
 class ConfigAdmin(BaseAdmin):
     list_display = ['code', 'name', 'value']
-    search_fields = ['code', 'name',  'value', 'description']
+    search_fields = ['code', 'name', 'value', 'description']
 
 
 @admin.register(Mailing)

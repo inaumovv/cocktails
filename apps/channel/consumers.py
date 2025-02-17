@@ -5,6 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class TicketConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         from apps.user.models import User

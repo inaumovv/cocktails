@@ -1,23 +1,34 @@
-from apps.user.models import Point, User
-from .serializers import AdminListPointSerializer
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from rest_framework import mixins
-from rest_framework.exceptions import ValidationError
+import django_filters
+from rest_framework import mixins, status
+from rest_framework.pagination import BasePagination
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
+
+from api.base.permissions import IsActiveUser
+from apps.common.models import Config
+from apps.user.models import User
+from .filters import PointFilter
+from .serializers import AdminPointUserSerializer, AdminCreatePointUserSerializer, AdminPointConfigSerializer
 
 
-class AdminPointViewSet(mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin, mixins.CreateModelMixin, GenericViewSet):
-    queryset = Point.objects.all()
-    serializer_class = AdminListPointSerializer
+class AdminPointViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = AdminPointUserSerializer
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = PointFilter
+    pagination_class = BasePagination
+    permission_classes = [IsActiveUser, DjangoModelPermissions]
 
-    def perform_create(self, serializer):
-        user_id = self.request.data.get('user')
+    def create(self, request, *args, **kwargs):
+        serializer = AdminCreatePointUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if not user_id:
-            raise ValidationError({'user': 'User ID is required.'})
 
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            raise ValidationError({'user': 'User with this ID does not exist.'})
-
-        serializer.save(user=user)
+class AdminPointConfigViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, GenericViewSet):
+    queryset = Config.objects.all()
+    serializer_class = AdminPointConfigSerializer
+    permission_classes = [IsActiveUser, DjangoModelPermissions]

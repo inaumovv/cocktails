@@ -203,6 +203,11 @@ class User(BaseModel, AbstractUser):
         ('Other', 'Other')
     ]
 
+    OS_CHOICES = [
+        ('Android', 'Android'),
+        ('IOS', 'IOS')
+    ]
+
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -230,6 +235,7 @@ class User(BaseModel, AbstractUser):
 
     date_of_birth = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
     avatar = models.FileField(null=True, blank=True, upload_to='avatars/', verbose_name='Аватар')
+    os = models.CharField(choices=OS_CHOICES, null=True, blank=True, default=None, verbose_name='Операционная система')
 
     REQUIRED_FIELDS = []
 
@@ -268,7 +274,8 @@ class ForgetRequest(BaseModel):
 
 class Referral(CreatedUpdatedModel):
     user = ForeignKey(User, related_name='referrals', verbose_name='Создатель кода')
-    code = models.CharField(max_length=150, db_index=True, verbose_name='Код')
+    code = models.CharField(max_length=150, db_index=True, unique=True, verbose_name='Код')
+    code_applying = models.IntegerField(default=0, verbose_name='Применений кода')
     description = models.TextField(null=True, blank=True, verbose_name='Описание')
 
     class Meta:
@@ -277,7 +284,7 @@ class Referral(CreatedUpdatedModel):
         verbose_name_plural = 'Реферальные коды'
 
     def __str__(self):
-        return '{}'.format(self.name)
+        return '{}'.format(self.code)
 
 
 class Point(BaseModel):

@@ -15,6 +15,7 @@ class AdminIngredientCategorySectionViewSet(mixins.ListModelMixin, GenericViewSe
     queryset = IngredientCategorySection.objects.prefetch_related('categories__ingredients')
     serializer_class = CombinedIngredientCategorySectionSerializer
     permission_classes = [AllowAny]
+    pagination_class = BasePagination
 
     def list(self, request, *args, **kwargs):
         qs = super().get_queryset()
@@ -33,6 +34,7 @@ class IngredientCategoryViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, 
     queryset = IngredientCategory.objects.all()
     serializer_class = AdminIngredientCategorySerializer
     permission_classes = [AllowAny]
+    pagination_class = BasePagination
 
     def list(self, request, *args, **kwargs):
         self.serializer_class = AdminIngredientCategorySerializer
@@ -43,6 +45,7 @@ class IngredientViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixi
     queryset = Ingredient.objects.all()
     serializer_class = AdminIngredientSerializer
     permission_classes = [AllowAny]
+    pagination_class = BasePagination
 
     def retrieve(self, request, *args, **kwargs):
         self.serializer_class = AdminIngredientSerializer
@@ -57,6 +60,7 @@ class ToolViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, mixins.Retriev
     queryset = Tool.objects.all()
     serializer_class = AdminViewToolSerializer
     permission_classes = [AllowAny]
+    pagination_class = BasePagination
 
     @action(detail=False, methods=['get'])
     def all(self, request, *args, **kwargs):

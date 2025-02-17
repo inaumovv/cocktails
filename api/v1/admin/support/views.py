@@ -1,18 +1,24 @@
+import django_filters
+from rest_framework.pagination import BasePagination
+
 from apps.channel.models import Ticket
 from apps.user.models import User
+from .filters import TicketFilter
 from .serializers import AdminTicketListSerializer
 from api.base.permissions import IsActiveUser
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, DjangoModelPermissions
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
-
-class AdminTicketViewSet(mixins.ListModelMixin, GenericViewSet):
+class AdminTicketViewSet(mixins.ListModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     serializer_class = AdminTicketListSerializer
-    permission_classes = [IsActiveUser]
+    permission_classes = [IsActiveUser, DjangoModelPermissions]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = TicketFilter
+    pagination_class = BasePagination
 
     def get_queryset(self):
         return Ticket.objects.all().order_by('-updated_at')

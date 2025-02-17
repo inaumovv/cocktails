@@ -3,7 +3,6 @@ from apps.user.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 __all__ = [
     'Ticket',
     'Message',
@@ -17,6 +16,7 @@ class Ticket(models.Model):
     status = models.CharField(max_length=50, default="open")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
 
 class Message(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)

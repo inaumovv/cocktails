@@ -6,7 +6,6 @@ from base.models import BaseModel, CreatedUpdatedModel
 from django.contrib.postgres.fields import ArrayField
 from apps.user.models import User
 
-
 __all__ = [
     'Goods',
     'Promo',

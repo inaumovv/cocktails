@@ -1,6 +1,10 @@
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import serializers
 from django.utils.crypto import get_random_string
-from apps.user.models import User, TempCode
+
+from apps.common.models import Config
+from apps.reaction.models import Claim
+from apps.user.models import User, TempCode, Referral, Point
 from base.backends import UsernameBackend
 from base.tasks import send_mail
 from rest_framework.authtoken.models import Token
@@ -159,15 +163,40 @@ class CodeVerificationSerializer(serializers.Serializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(write_only=True)
+    ref_code = serializers.CharField(allow_null=True, allow_blank=True, max_length=150, write_only=True)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'phone', 'gender', 'date_of_birth', 'password', 'email']
+        fields = ['first_name', 'last_name', 'phone', 'gender', 'date_of_birth', 'password', 'email', 'ref_code']
 
     def create(self, validated_data):
         # email = self.context['email']
         email = validated_data.pop('email')
         password = validated_data.pop('password')
+        ref_code = validated_data.pop('ref_code')
+
+        if ref_code:
+            success_code = Referral.objects.filter(code=ref_code).select_related('user').first()
+            if not success_code:
+                raise serializers.ValidationError('No such referral code exists')
+
+            claim_object = Claim.objects.create(
+                user=success_code.user.id,
+                content_type=ContentType.objects.get_for_model(success_code),
+                object_id=success_code.id,
+                content_object=success_code
+            )
+
+            code_applying = success_code.code_applying + 1
+            success_code.code_applying = code_applying
+            success_code.save()
+
+            if claim_object:
+                cost = Config.objects.get(code='referral_code')
+                cost = int(cost.value)
+
+                Point.objects.create(user=success_code.user.id, text='Пригласил пользователя', points=cost,
+                                     charge=False)
 
         user = User.objects.create_user(
             email=email,
