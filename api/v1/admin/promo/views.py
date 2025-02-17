@@ -43,7 +43,7 @@ class PromoPurchasedAdminView(APIView):
 
         if search:
             queryset = queryset.filter(
-                Q(user_id__icontains=search) |
+                Q(user_id=search) |
                 Q(purchased_at__icontains=search)
             )
 
