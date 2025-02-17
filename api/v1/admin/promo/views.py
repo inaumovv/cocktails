@@ -87,4 +87,4 @@ class PromoDeletePurchasedAdminView(APIView):
             return Response({"error": "Purchased promo not found"}, status=status.HTTP_404_NOT_FOUND)
 
         purchased_promo.delete()
-        return Response({"message": "Purchased promo deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Purchased promo deleted successfully"}, status=status.HTTP_200_OK)
