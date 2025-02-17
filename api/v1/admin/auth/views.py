@@ -2,7 +2,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from api.v1.admin.auth.serializers import AdminWebSignInRequestSerializer, AdminUserSerializer
+from api.v1.admin.auth.serializers import AdminWebSignInRequestSerializer, AdminRegisterUserSerializer
 
 import logging
 
@@ -19,7 +19,7 @@ class AdminWebSignInView(GenericAPIView):
 
         token, _ = Token.objects.get_or_create(user=serializer.user)
 
-        user_data = AdminUserSerializer(serializer.user).data
+        user_data = AdminRegisterUserSerializer(serializer.user).data
 
         return Response({
             'token': token.key,

@@ -1,5 +1,5 @@
-from api.v1.admin.auth.serializers import AdminUserSerializer
-from api.v1.admin.profile.serializers import AdminUserCreateSerializer, AdminUserUpdateSerializer
+
+from api.v1.admin.profile.serializers import AdminUserCreateSerializer, AdminUserUpdateSerializer, AdminUserSerializer
 
 tags = ['admin']
 

@@ -4,7 +4,7 @@ from base.backends import UsernameBackend
 
 __all__ = [
     'AdminWebSignInRequestSerializer',
-    'AdminUserSerializer',
+    'AdminRegisterUserSerializer',
 ]
 
 
@@ -38,7 +38,7 @@ class AdminWebSignInRequestSerializer(serializers.Serializer):
         self.user: User = back.authenticate(**kwargs)
 
 
-class AdminUserSerializer(serializers.ModelSerializer):
+class AdminRegisterUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
