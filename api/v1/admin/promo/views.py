@@ -33,12 +33,13 @@ class PromoAdminViewSet(
 class PromoPurchasedAdminView(APIView):
     pagination_class = BasePagination
     permission_classes = [IsActiveUser, DjangoModelPermissions]
+    queryset = PurchasedPromo.objects.all()
 
     @swagger_auto_schema(**purchased_promo_get)
-    def get(self, request, promo_id, *args, **kwargs):
+    def get(self, request, id, *args, **kwargs):
         search = request.query_params.get('search')
 
-        queryset = PurchasedPromo.objects.filter(promo_id=promo_id)
+        queryset = PurchasedPromo.objects.filter(promo_id=id)
 
         if search:
             queryset = queryset.filter(
@@ -51,11 +52,11 @@ class PromoPurchasedAdminView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(**purchased_promo_post)
-    def post(self, request, promo_id, *args, **kwargs):
+    def post(self, request, id, *args, **kwargs):
         user_id = request.data.get('user_id')
 
         try:
-            Promo.objects.get(id=promo_id)
+            Promo.objects.get(id=id)
         except Promo.DoesNotExist:
             return Response({"error": "Promo not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -64,24 +65,24 @@ class PromoPurchasedAdminView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        if PurchasedPromo.objects.filter(user_id=user_id, promo_id=promo_id).exists():
+        if PurchasedPromo.objects.filter(user_id=user_id, promo_id=id).exists():
             return Response({"error": "User already purchased this promo"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Создаем купленный промокод
-        purchased_promo = PurchasedPromo.objects.create(user_id=user_id, promo_id=promo_id)
+        purchased_promo = PurchasedPromo.objects.create(user_id=user_id, promo_id=id)
 
         # Сериализация и возврат данных
         serializer = AdminPurchasedPromoSerializer(purchased_promo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, promo_id, *args, **kwargs):
+    def delete(self, request, id, *args, **kwargs):
         """
         Удаляет купленный промокод по promo_id и user_id.
         """
         user_id = request.data.get('user_id')
 
         try:
-            purchased_promo = PurchasedPromo.objects.get(promo_id=promo_id, user_id=user_id)
+            purchased_promo = PurchasedPromo.objects.get(promo_id=id, user_id=user_id)
         except PurchasedPromo.DoesNotExist:
             return Response({"error": "Purchased promo not found"}, status=status.HTTP_404_NOT_FOUND)
 
