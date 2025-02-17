@@ -1,5 +1,6 @@
 import django_filters
 from django.db.models import Q
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, viewsets, status
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
@@ -8,6 +9,7 @@ from rest_framework.views import APIView
 from api.base.permissions import IsActiveUser
 from api.v1.admin.promo.filters import PromoFilter
 from api.v1.admin.promo.serializers import AdminPromoSerializer, AdminPurchasedPromoSerializer
+from api.v1.admin.promo.swagger import purchased_promo_get, purchased_promo_post
 from apps.goods.models import Promo, PurchasedPromo
 from apps.user.models import User
 from base.pagination import BasePagination
@@ -32,6 +34,7 @@ class PromoPurchasedAdminView(APIView):
     pagination_class = BasePagination
     permission_classes = [IsActiveUser, DjangoModelPermissions]
 
+    @swagger_auto_schema(**purchased_promo_get)
     def get(self, request, promo_id, *args, **kwargs):
         search = request.query_params.get('search')
 
@@ -47,6 +50,7 @@ class PromoPurchasedAdminView(APIView):
         serializer = AdminPurchasedPromoSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(**purchased_promo_post)
     def post(self, request, promo_id, *args, **kwargs):
         user_id = request.data.get('user_id')
 
