@@ -1,4 +1,5 @@
 import django_filters
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins
 from rest_framework import status
 from rest_framework.permissions import DjangoModelPermissions
@@ -10,6 +11,7 @@ from apps.user.models import User
 from base.pagination import BasePagination
 from .filters import ProfileFilter
 from .serializers import AdminUserSerializer, AdminUserUpdateSerializer, AdminUserCreateSerializer
+from .swagger import profile_update, profile_create
 
 
 class AdminUserViewSet(mixins.CreateModelMixin,
@@ -32,17 +34,18 @@ class AdminUserViewSet(mixins.CreateModelMixin,
         self.serializer_class = AdminUserSerializer
         return super().retrieve(request, *args, **kwargs)
 
+    @swagger_auto_schema(**profile_update)
     def update(self, request, *args, **kwargs):
         partial = request.data.get('partial', False)
         user = self.get_object()
         serializer = AdminUserUpdateSerializer(user, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        user = serializer.save()
+        return Response(AdminUserSerializer(user, many=False).data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(**profile_create)
     def create(self, request, *args, **kwargs):
         serializer = AdminUserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
         user = serializer.save()
-        return Response(AdminUserSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(AdminUserSerializer(user, many=False).data, status=status.HTTP_201_CREATED)

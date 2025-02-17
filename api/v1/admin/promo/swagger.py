@@ -6,7 +6,7 @@ purchased_promo_get = {
     'operation_description': '## Список покупок промокода',
     'operation_summary': 'Получение списка покупок промокода',
     'responses': {'200': AdminPurchasedPromoSerializer(many=True)},
-    'parameters': {'search': {'type': 'string', 'in': 'query'}},
+    'parameters': {'search': {'type': 'string', 'in': 'query', 'description': 'Поиск'}},
     'tags': tags,
 }
 

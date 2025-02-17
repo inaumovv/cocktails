@@ -167,7 +167,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'phone', 'gender', 'date_of_birth', 'password', 'email', 'ref_code']
+        fields = ['first_name', 'last_name', 'phone', 'gender', 'date_of_birth', 'password', 'email', 'ref_code', 'os']
 
     def create(self, validated_data):
         # email = self.context['email']

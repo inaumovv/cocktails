@@ -60,10 +60,17 @@ class AdminUserUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
+        user_permissions = validated_data.pop('user_permissions', [])
+
+        if len(user_permissions) > 0:
+            instance.user_permissions.set(user_permissions)
+
         if password:
             instance.password = make_password(password)
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
         instance.save()
         return instance
 
@@ -90,8 +97,14 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        user_permissions = validated_data.pop('user_permissions', [])
+
         user = User.objects.create(**validated_data)
         if password:
             user.set_password(password)
+
+        if len(user_permissions) > 0:
+            user.user_permissions.set(user_permissions)
+
         user.save()
         return user
