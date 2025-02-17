@@ -1,7 +1,6 @@
 import django_filters
 from django.db.models import Q
 from rest_framework import mixins, viewsets, status
-from rest_framework.pagination import BasePagination
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,6 +10,7 @@ from api.v1.admin.promo.filters import PromoFilter
 from api.v1.admin.promo.serializers import AdminPromoSerializer, AdminPurchasedPromoSerializer
 from apps.goods.models import Promo, PurchasedPromo
 from apps.user.models import User
+from base.pagination import BasePagination
 
 
 class PromoAdminViewSet(

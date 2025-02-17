@@ -1,14 +1,13 @@
 import django_filters
-from rest_framework import mixins, status
+from rest_framework import mixins
 from rest_framework import viewsets
-from rest_framework.pagination import BasePagination
 from rest_framework.permissions import DjangoModelPermissions
-from rest_framework.response import Response
 
 from api.base.permissions import IsActiveUser
 from api.v1.admin.referral.filters import ReferralFilter
 from api.v1.admin.referral.serializers import UserReferralSerializer, ReferralSerializer
 from apps.user.models import User
+from base.pagination import BasePagination
 
 
 class ReferralAdminViewSet(

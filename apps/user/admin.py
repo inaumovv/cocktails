@@ -8,7 +8,7 @@ from base.admin import BaseAdmin
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     fieldsets = (
-        (None, {'fields': ('username', 'email', 'password', 'phone')}),
+        (None, {'fields': ('username', 'email', 'password', 'phone', 'os')}),
         ('Личная информаця', {'fields': ('first_name', 'last_name', 'date_of_birth', 'avatar', 'gender')}),
         ('Права', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Даты', {'fields': ('last_login', 'date_joined')}),

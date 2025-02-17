@@ -1,8 +1,8 @@
 import django_filters
-from rest_framework.pagination import BasePagination
 
 from apps.channel.models import Ticket
 from apps.user.models import User
+from base.pagination import BasePagination
 from .filters import TicketFilter
 from .serializers import AdminTicketListSerializer
 from api.base.permissions import IsActiveUser

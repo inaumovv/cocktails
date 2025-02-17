@@ -1,6 +1,5 @@
 import django_filters
 from rest_framework import mixins, status
-from rest_framework.pagination import BasePagination
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -8,6 +7,7 @@ from rest_framework.viewsets import GenericViewSet
 from api.base.permissions import IsActiveUser
 from apps.common.models import Config
 from apps.user.models import User
+from base.pagination import BasePagination
 from .filters import PointFilter
 from .serializers import AdminPointUserSerializer, AdminCreatePointUserSerializer, AdminPointConfigSerializer
 

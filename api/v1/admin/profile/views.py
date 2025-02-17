@@ -1,13 +1,13 @@
 import django_filters
 from rest_framework import mixins
 from rest_framework import status
-from rest_framework.pagination import BasePagination
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from api.base.permissions import IsActiveUser
 from apps.user.models import User
+from base.pagination import BasePagination
 from .filters import ProfileFilter
 from .serializers import AdminUserSerializer, AdminUserUpdateSerializer, AdminUserCreateSerializer
 
