@@ -30,7 +30,12 @@ class PromoAdminViewSet(
     pagination_class = BasePagination
 
 
-class PromoPurchasedAdminViewSet(viewsets.ViewSet):
+class PromoPurchasedAdminViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     permission_classes = [IsActiveUser, DjangoModelPermissions]
     pagination_class = BasePagination
     queryset = PurchasedPromo.objects.all()
@@ -72,12 +77,3 @@ class PromoPurchasedAdminViewSet(viewsets.ViewSet):
         purchased_promo = PurchasedPromo.objects.create(user_id=user_id, promo_id=promo_id)
         serializer = AdminPurchasedPromoSerializer(purchased_promo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def destroy(self, request, pk=None):
-        try:
-            purchased_promo = PurchasedPromo.objects.get(id=pk)
-        except PurchasedPromo.DoesNotExist:
-            return Response({"error": "Purchased promo not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        purchased_promo.delete()
-        return Response({"message": "Purchased promo deleted successfully"}, status=status.HTTP_200_OK)
