@@ -30,13 +30,13 @@ class PromoAdminViewSet(
     pagination_class = BasePagination
 
 
-class PromoPurchasedAdminView(APIView):
-    pagination_class = BasePagination
+class PromoPurchasedAdminViewSet(viewsets.ViewSet):
     permission_classes = [IsActiveUser, DjangoModelPermissions]
+    pagination_class = BasePagination
     queryset = PurchasedPromo.objects.all()
 
     @swagger_auto_schema(manual_parameters=[search, promo], **purchased_promo_get)
-    def get(self, request, *args, **kwargs):
+    def list(self, request):
         search_query = request.query_params.get('search')
         promo_id = request.query_params.get('promo')
 
@@ -48,12 +48,11 @@ class PromoPurchasedAdminView(APIView):
                 Q(purchased_at__icontains=search_query)
             )
 
-        # Сериализация и возврат данных
         serializer = AdminPurchasedPromoSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(**purchased_promo_post)
-    def post(self, request, *args, **kwargs):
+    def create(self, request):
         user_id = request.data.get('user_id')
         promo_id = request.data.get('promo_id')
 
@@ -70,16 +69,13 @@ class PromoPurchasedAdminView(APIView):
         if PurchasedPromo.objects.filter(user_id=user_id, promo_id=promo_id).exists():
             return Response({"error": "User already purchased this promo"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Создаем купленный промокод
         purchased_promo = PurchasedPromo.objects.create(user_id=user_id, promo_id=promo_id)
-
-        # Сериализация и возврат данных
         serializer = AdminPurchasedPromoSerializer(purchased_promo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def delete(self, request, id, *args, **kwargs):
+    def destroy(self, request, pk=None):
         try:
-            purchased_promo = PurchasedPromo.objects.get(id=id)
+            purchased_promo = PurchasedPromo.objects.get(id=pk)
         except PurchasedPromo.DoesNotExist:
             return Response({"error": "Purchased promo not found"}, status=status.HTTP_404_NOT_FOUND)
 

@@ -1,7 +1,7 @@
 import django_filters
 from django.db.models import Q
 
-from apps.goods.models import Promo
+from apps.goods.models import Promo, PurchasedPromo
 
 
 class PromoFilter(django_filters.FilterSet):
