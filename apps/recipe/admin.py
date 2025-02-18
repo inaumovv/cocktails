@@ -60,6 +60,10 @@ class IngredientAdmin(BaseAdmin):
     search_fields = ('name', 'category__name')
     ordering = ('id',)
 
+    def get_recipes(self, obj: Ingredient):
+        return [recipe.title for recipe in obj.ingredient_recipes.all()]
+    get_recipes.short_description = 'Recipes'
+
 
 @admin.register(Tool)
 class ToolAdmin(BaseAdmin):
@@ -68,7 +72,7 @@ class ToolAdmin(BaseAdmin):
     search_fields = ('name',)
     ordering = ('id', )
 
-    def get_recipes(self, obj):
+    def get_recipes(self, obj: Tool):
         return [recipe.title for recipe in obj.recipes_tool.all()]
     get_recipes.short_description = 'Recipes'
 
