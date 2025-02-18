@@ -36,7 +36,6 @@ class PromoPurchasedAdminViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
-    permission_classes = [IsActiveUser, DjangoModelPermissions]
     pagination_class = BasePagination
     queryset = PurchasedPromo.objects.all()
 
@@ -58,8 +57,8 @@ class PromoPurchasedAdminViewSet(
 
     @swagger_auto_schema(**purchased_promo_post)
     def create(self, request):
-        user_id = request.data.get('user_id')
-        promo_id = request.data.get('promo_id')
+        user_id = request.data.get('user')
+        promo_id = request.data.get('promo')
 
         try:
             Promo.objects.get(id=promo_id)
