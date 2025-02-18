@@ -1,3 +1,5 @@
+from drf_yasg import openapi
+
 from api.v1.admin.promo.serializers import AdminPurchasedPromoSerializer
 
 tags = ['admin']
@@ -17,5 +19,19 @@ purchased_promo_post = {
     'responses': {'201': AdminPurchasedPromoSerializer()},
     'tags': tags,
 }
+
+search = openapi.Parameter(
+    name='search',
+    in_=openapi.IN_QUERY,
+    description='Поиск',
+    type=openapi.TYPE_STRING,
+)
+
+promo = openapi.Parameter(
+    name='promo_id',
+    in_=openapi.IN_QUERY,
+    description='Айди промокода',
+    type=openapi.TYPE_INTEGER,
+)
 
 

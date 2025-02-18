@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from api.base.permissions import IsActiveUser
 from api.v1.admin.promo.filters import PromoFilter
 from api.v1.admin.promo.serializers import AdminPromoSerializer, AdminPurchasedPromoSerializer
-from api.v1.admin.promo.swagger import purchased_promo_get, purchased_promo_post
+from api.v1.admin.promo.swagger import purchased_promo_get, purchased_promo_post, search, promo
 from apps.goods.models import Promo, PurchasedPromo
 from apps.user.models import User
 from base.pagination import BasePagination
@@ -35,16 +35,17 @@ class PromoPurchasedAdminView(APIView):
     permission_classes = [IsActiveUser, DjangoModelPermissions]
     queryset = PurchasedPromo.objects.all()
 
-    @swagger_auto_schema(**purchased_promo_get)
-    def get(self, request, id, *args, **kwargs):
-        search = request.query_params.get('search')
+    @swagger_auto_schema(manual_parameters=[search, promo], **purchased_promo_get)
+    def get(self, request, *args, **kwargs):
+        search_query = request.query_params.get('search')
+        promo_id = request.query_params.get('promo')
 
-        queryset = PurchasedPromo.objects.filter(promo_id=id)
+        queryset = PurchasedPromo.objects.filter(promo_id=promo_id)
 
-        if search:
+        if search_query:
             queryset = queryset.filter(
-                Q(user_id=search) |
-                Q(purchased_at__icontains=search)
+                Q(user_id=search_query) |
+                Q(purchased_at__icontains=search_query)
             )
 
         # Сериализация и возврат данных
@@ -52,11 +53,12 @@ class PromoPurchasedAdminView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(**purchased_promo_post)
-    def post(self, request, id, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user_id = request.data.get('user_id')
+        promo_id = request.data.get('promo_id')
 
         try:
-            Promo.objects.get(id=id)
+            Promo.objects.get(id=promo_id)
         except Promo.DoesNotExist:
             return Response({"error": "Promo not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -65,20 +67,15 @@ class PromoPurchasedAdminView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        if PurchasedPromo.objects.filter(user_id=user_id, promo_id=id).exists():
+        if PurchasedPromo.objects.filter(user_id=user_id, promo_id=promo_id).exists():
             return Response({"error": "User already purchased this promo"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Создаем купленный промокод
-        purchased_promo = PurchasedPromo.objects.create(user_id=user_id, promo_id=id)
+        purchased_promo = PurchasedPromo.objects.create(user_id=user_id, promo_id=promo_id)
 
         # Сериализация и возврат данных
         serializer = AdminPurchasedPromoSerializer(purchased_promo)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class PromoDeletePurchasedAdminView(APIView):
-    permission_classes = [IsActiveUser, DjangoModelPermissions]
-    queryset = PurchasedPromo.objects.all()
 
     def delete(self, request, id, *args, **kwargs):
         try:

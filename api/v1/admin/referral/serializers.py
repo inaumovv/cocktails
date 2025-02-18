@@ -4,7 +4,7 @@ from apps.user.models import Referral, User
 
 
 class AdminReferralSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     def validate_user(self, value):
         try:
@@ -15,12 +15,5 @@ class AdminReferralSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Referral
-        fields = ['id', 'user', 'code', 'code_applying']
-
-
-class AdminUserReferralSerializer(serializers.ModelSerializer):
-    ref_code = AdminReferralSerializer(read_only=True, many=False)
-
-    class Meta:
-        model = User
-        fields = ('id', 'ref_code')
+        fields = ['id', 'code', 'code_applying', 'user']
+        read_only_fields = ['code_applying']

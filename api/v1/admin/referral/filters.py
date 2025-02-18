@@ -14,12 +14,7 @@ class ReferralFilter(django_filters.FilterSet):
     def filter_search(self, queryset, name, value):
         query = Q()
 
-        if any(char.isdigit() for char in value):
-            query |= Q(phone__icontains=value)
-
-        query |= Q(email__icontains=value)
-
         if value.isdigit():
-            query |= Q(id=value)
+            query |= Q(user_id=value)
 
         return queryset.filter(query)
