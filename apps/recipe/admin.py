@@ -56,12 +56,12 @@ class IngredientAdmin(BaseAdmin):
         'category__name',
         'is_alcoholic'
     )
-    list_display = ('id', 'name', 'language', 'description', 'category', 'is_alcoholic')
+    list_display = ('id', 'name', 'language', 'description', 'category', 'is_alcoholic', 'get_recipes')
     search_fields = ('name', 'category__name')
     ordering = ('id',)
 
     def get_recipes(self, obj: Ingredient):
-        return [recipe.title for recipe in obj.ingredient_recipes.all()]
+        return [recipe for recipe in obj.ingredient_recipes.all()]
     get_recipes.short_description = 'Recipes'
 
 

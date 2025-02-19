@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework import mixins
 from rest_framework.decorators import action
@@ -109,6 +110,8 @@ class ToolViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveMod
     queryset = Tool.objects.all()
     serializer_class = ViewToolSerializer
     permission_classes = [AllowAny]
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['name', 'created_at']
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -121,7 +124,7 @@ class ToolViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveMod
     @swagger_auto_schema(**tool_retrieve)
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
-    
+
 
 class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin, mixins.CreateModelMixin, GenericViewSet):
@@ -135,7 +138,7 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
     def get_queryset(self):
         queryset = super().get_queryset()
         return self.filter_by_language(queryset)
-    
+
     def filter_for_selection(self, request, *args, **kwargs):
         main_ingredient = request.query_params.get('ingredients')
         ingredients = request.query_params.get('other_ingredients')
@@ -162,31 +165,32 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
         ).distinct()
 
         recipes_with_main = recipes_with_ingr.annotate(
-            matched_main_ingredients=Count('recipe_ingredients__ingredient__id', 
-                                        filter=Q(recipe_ingredients__ingredient__id__in=main_ingredient_ids), 
-                                        distinct=True)
+            matched_main_ingredients=Count('recipe_ingredients__ingredient__id',
+                                           filter=Q(recipe_ingredients__ingredient__id__in=main_ingredient_ids),
+                                           distinct=True)
         ).filter(matched_main_ingredients=len(main_ingredient_ids))
 
         if ingredient_ids:
             recipes_with_all_ingredients = recipes_with_main.filter(
                 recipe_ingredients__ingredient__id__in=ingredient_ids
             ).annotate(
-                matched_ingredients=Count('recipe_ingredients__ingredient__id', 
-                                        filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids), 
-                                        distinct=True)
+                matched_ingredients=Count('recipe_ingredients__ingredient__id',
+                                          filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids),
+                                          distinct=True)
             ).filter(matched_ingredients=len(ingredient_ids)).distinct()
 
             recipes_with_some_ingredients = recipes_with_main.filter(
                 recipe_ingredients__ingredient__id__in=ingredient_ids
             ).annotate(
-                matched_ingredients=Count('recipe_ingredients__ingredient__id', 
-                                        filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids), 
-                                        distinct=True)
+                matched_ingredients=Count('recipe_ingredients__ingredient__id',
+                                          filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids),
+                                          distinct=True)
             ).exclude(id__in=recipes_with_all_ingredients.values('id')).distinct().order_by('-matched_ingredients')
 
             for recipe in recipes_with_some_ingredients:
                 missing_ingredients = list(set(ingredient_ids) - set(
-                    recipe.recipe_ingredients.filter(ingredient__id__in=ingredient_ids).values_list('ingredient_id', flat=True)
+                    recipe.recipe_ingredients.filter(ingredient__id__in=ingredient_ids).values_list('ingredient_id',
+                                                                                                    flat=True)
                 ))
                 missing_ingredients_details = Ingredient.objects.filter(id__in=missing_ingredients)
                 missing_ingredients_serialized = IngredientSerializer(missing_ingredients_details, many=True).data
@@ -196,13 +200,15 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
             recipes_with_all_ingredients = recipes_with_main
             recipes_with_some_ingredients = []
 
-        serializer_all = SelectionRecipeSerializer(recipes_with_all_ingredients, many=True, context={'request': request})
-        serializer_some = SelectionRecipeSerializer(recipes_with_some_ingredients, many=True, context={'request': request})
+        serializer_all = SelectionRecipeSerializer(recipes_with_all_ingredients, many=True,
+                                                   context={'request': request})
+        serializer_some = SelectionRecipeSerializer(recipes_with_some_ingredients, many=True,
+                                                    context={'request': request})
 
         return {
-                'all_ingredients': serializer_all.data,
-                'some_ingredients': serializer_some.data
-            }, None, None
+            'all_ingredients': serializer_all.data,
+            'some_ingredients': serializer_some.data
+        }, None, None
 
     @swagger_auto_schema(**recipe_list)
     def list(self, request, *args, **kwargs):
@@ -236,7 +242,7 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
     def selection(self, request):
         main_ingredient_ids = request.data.get('main_ingredients', [])
         ingredient_ids = request.data.get('other_ingredients', [])
-        
+
         if not main_ingredient_ids:
             return Response({"detail": "No main ingredient ids provided."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -249,31 +255,32 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
         ).distinct()
 
         recipes_with_main = recipes_with_ingr.annotate(
-            matched_main_ingredients=Count('recipe_ingredients__ingredient__id', 
-                                        filter=Q(recipe_ingredients__ingredient__id__in=main_ingredient_ids), 
-                                        distinct=True)
+            matched_main_ingredients=Count('recipe_ingredients__ingredient__id',
+                                           filter=Q(recipe_ingredients__ingredient__id__in=main_ingredient_ids),
+                                           distinct=True)
         ).filter(matched_main_ingredients=len(main_ingredient_ids))
 
         if ingredient_ids:
             recipes_with_all_ingredients = recipes_with_main.filter(
                 recipe_ingredients__ingredient__id__in=ingredient_ids
             ).annotate(
-                matched_ingredients=Count('recipe_ingredients__ingredient__id', 
-                                        filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids), 
-                                        distinct=True)
+                matched_ingredients=Count('recipe_ingredients__ingredient__id',
+                                          filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids),
+                                          distinct=True)
             ).filter(matched_ingredients=len(ingredient_ids)).distinct()
 
             recipes_with_some_ingredients = recipes_with_main.filter(
                 recipe_ingredients__ingredient__id__in=ingredient_ids
             ).annotate(
-                matched_ingredients=Count('recipe_ingredients__ingredient__id', 
-                                        filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids), 
-                                        distinct=True)
+                matched_ingredients=Count('recipe_ingredients__ingredient__id',
+                                          filter=Q(recipe_ingredients__ingredient__id__in=ingredient_ids),
+                                          distinct=True)
             ).exclude(id__in=recipes_with_all_ingredients.values('id')).distinct().order_by('-matched_ingredients')
 
             for recipe in recipes_with_some_ingredients:
                 missing_ingredients = list(set(ingredient_ids) - set(
-                    recipe.recipe_ingredients.filter(ingredient__id__in=ingredient_ids).values_list('ingredient_id', flat=True)
+                    recipe.recipe_ingredients.filter(ingredient__id__in=ingredient_ids).values_list('ingredient_id',
+                                                                                                    flat=True)
                 ))
                 missing_ingredients_details = Ingredient.objects.filter(id__in=missing_ingredients)
                 missing_ingredients_serialized = IngredientSerializer(missing_ingredients_details, many=True).data
@@ -292,7 +299,6 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
             'all_ingredients': serializer_all.data,
             'some_ingredients': serializer_some.data
         })
-
 
     @swagger_auto_schema(**recipe_create)
     def create(self, request, *args, **kwargs):

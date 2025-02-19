@@ -2,6 +2,8 @@ from django.contrib.admin import display
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.db.models import CharField
+
 from apps.user.managers import UserManager
 from base.fields import ForeignKey, PhoneNumberField, ChoiceArrayField, ManyToManyField
 from base.models import BaseModel, CreatedAtModel, CreatedUpdatedModel
@@ -218,7 +220,7 @@ class User(BaseModel, AbstractUser):
     )
     # todo: обязательное, но нужно его брать при авторизации через google и тд
     email = models.EmailField(max_length=150, null=True, blank=True, verbose_name='E-mail')
-    phone = PhoneNumberField(null=True, blank=True, db_index=True, verbose_name='Телефон')
+    phone = CharField(null=True, blank=True, db_index=True, verbose_name='Телефон')
     is_active = models.BooleanField('Активный?', default=True)
 
     first_name = models.CharField(max_length=150, default='', blank=True, db_index=True, verbose_name='Имя')

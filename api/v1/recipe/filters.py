@@ -1,4 +1,4 @@
-from django.db.models import Q, BooleanField, Case, When, Value
+from django.db.models import Q, BooleanField, Case, When, Value, Count
 from django_filters import rest_framework as filters
 from apps.recipe.models import Recipe
 
@@ -11,10 +11,12 @@ class RecipeFilterSet(filters.FilterSet):
         fields=(
             ('title', 'title'),
             ('video_url', 'video_url'),
+            ('popularity', 'popularity'),
         ),
         field_labels={
             'title': 'Recipe title',
             'video_url': 'Video exists',
+            'popularity': 'Popularity',
         }
     )
 
@@ -64,6 +66,8 @@ class RecipeFilterSet(filters.FilterSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        queryset = queryset.annotate(popularity=Count('favorited_by'))
         return queryset
 
     class Meta:
