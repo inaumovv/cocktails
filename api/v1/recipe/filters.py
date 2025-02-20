@@ -11,12 +11,10 @@ class RecipeFilterSet(filters.FilterSet):
         fields=(
             ('title', 'title'),
             ('video_url', 'video_url'),
-            ('popularity', 'popularity'),
         ),
         field_labels={
             'title': 'Recipe title',
             'video_url': 'Video exists',
-            'popularity': 'Popularity',
         }
     )
 
@@ -35,9 +33,9 @@ class RecipeFilterSet(filters.FilterSet):
             for i in range(len(value_list)):
                 for j in range(i + 1, len(value_list)):
                     q |= (
-                        (Q(title__icontains=value_list[i]) & Q(title__icontains=value_list[j])) |
-                        (Q(recipe_ingredients__ingredient__name__icontains=value_list[i]) & Q(
-                            recipe_ingredients__ingredient__name__icontains=value_list[j]))
+                            (Q(title__icontains=value_list[i]) & Q(title__icontains=value_list[j])) |
+                            (Q(recipe_ingredients__ingredient__name__icontains=value_list[i]) & Q(
+                                recipe_ingredients__ingredient__name__icontains=value_list[j]))
                     )
 
         return queryset.filter(q).distinct()
@@ -67,8 +65,11 @@ class RecipeFilterSet(filters.FilterSet):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        queryset = queryset.annotate(popularity=Count('favorited_by'))
         return queryset
+
+    def filter_queryset(self, queryset):
+        queryset = queryset.annotate(popularity=Count('favorited_by'))
+        return super().filter_queryset(queryset)
 
     class Meta:
         model = Recipe
