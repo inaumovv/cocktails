@@ -95,7 +95,7 @@ class Ingredient(CreatedUpdatedModel):
     is_alcoholic = models.BooleanField(default=False, verbose_name='Алкогольный?')
 
     class Meta:
-        ordering = ['id']
+        ordering = ['name']
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
         indexes = [

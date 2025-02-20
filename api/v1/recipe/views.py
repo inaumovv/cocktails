@@ -96,8 +96,6 @@ class IngredientViewSet(LanguageFilterMixin, mixins.RetrieveModelMixin, GenericV
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [AllowAny]
-    filter_backends = [OrderingFilter]
-    ordering_fields = ['name', 'created_at']
 
     def get_queryset(self):
         qs = super().get_queryset()
