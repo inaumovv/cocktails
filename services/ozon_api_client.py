@@ -45,7 +45,7 @@ class OzonApiClient:
         items: list[dict] = data['items']
         for item in items:
             try:
-                if item['statuses']['status_name'] == 'Продается':
+                if item['statuses']['status_name'] == 'Продается' and item['description_category_id'] != 17028761:
                     sku: int = item['sources'][0]['sku']
                     result_products.append(
                         Goods(

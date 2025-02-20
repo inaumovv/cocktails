@@ -203,7 +203,7 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULE = {
     'get_ozon_products': {
         'task': 'goods.get_ozon_products',
-        'schedule': timedelta(hours=1)
+        'schedule': timedelta(seconds=20)
     },
 }
 
