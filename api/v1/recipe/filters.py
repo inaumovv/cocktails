@@ -11,10 +11,12 @@ class RecipeFilterSet(filters.FilterSet):
         fields=(
             ('title', 'title'),
             ('video_url', 'video_url'),
+            ('popularity', 'popularity'),
         ),
         field_labels={
             'title': 'Recipe title',
             'video_url': 'Video exists',
+            'popularity': 'Popularity',
         }
     )
 
