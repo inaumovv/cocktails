@@ -7,6 +7,7 @@ class RecipeFilterSet(filters.FilterSet):
     q = filters.CharFilter(method='filter_q')
     ingredients = filters.CharFilter(method='filter_ingredients')
     tools = filters.CharFilter(method='filter_tools')
+    alc = filters.BooleanFilter(method='filter_alc')
     ordering = filters.OrderingFilter(
         fields=(
             ('title', 'title'),
@@ -73,6 +74,17 @@ class RecipeFilterSet(filters.FilterSet):
         queryset = queryset.annotate(popularity=Count('favorited_by'))
         return super().filter_queryset(queryset)
 
+    def filter_alc(self, queryset, name, value):
+        if value is None:
+            return queryset
+
+        if value:
+            # Рецепты с хотя бы одним алкогольным ингредиентом
+            return queryset.filter(recipe_ingredients__ingredient__is_alcoholic=True).distinct()
+        else:
+            # Рецепты без алкогольных ингредиентов
+            return queryset.exclude(recipe_ingredients__ingredient__is_alcoholic=True).distinct()
+
     class Meta:
         model = Recipe
-        fields = ['q', 'ingredients', 'tools', 'ordering']
+        fields = ['q', 'ingredients', 'tools', 'ordering', 'alc']
