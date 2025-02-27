@@ -138,23 +138,9 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = self.filter_by_language(queryset)
-
-        alc = self.request.query_params.get('alc')
-
-        if alc is True:
-            # Рецепты с хотя бы одним алкогольным ингредиентом
-            queryset = queryset.filter(recipe_ingredients__ingredient__is_alcoholic=True).distinct()
-        elif alc is False:
-            # Рецепты без алкогольных ингредиентов
-            queryset = queryset.exclude(recipe_ingredients__ingredient__is_alcoholic=True).distinct()
-
         queryset = queryset.annotate(popularity=Count('favorited_by'))
 
         return queryset
-
-
-
-
 
     def filter_for_selection(self, request, *args, **kwargs):
         main_ingredient = request.query_params.get('ingredients')
