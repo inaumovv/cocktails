@@ -138,11 +138,6 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = self.filter_by_language(queryset)
-        queryset = queryset.annotate(
-            alcoholic_ingredients_count=Count(
-                'recipe_ingredients__ingredient',
-                filter=Q(recipe_ingredients__ingredient__is_alcoholic=True)
-            ))
         queryset = queryset.annotate(popularity=Count('favorited_by'))
 
         return queryset

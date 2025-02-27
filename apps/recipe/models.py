@@ -156,6 +156,7 @@ class Recipe(BaseModel):
     photo = models.ImageField(upload_to='recipes/', blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes_user', verbose_name='Пользователь')
     tools = models.ManyToManyField(Tool, blank=True, related_name='recipes_tool', verbose_name='Инструменты')
+    is_alcoholic = models.BooleanField(default=True, verbose_name='Алкогольный?')
 
     language = models.CharField(
         max_length=20,

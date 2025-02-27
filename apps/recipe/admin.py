@@ -27,7 +27,7 @@ class IngredientCategorySectionAdmin(admin.ModelAdmin):
 @admin.register(Recipe)
 class RecipeAdmin(BaseAdmin):
     fieldsets = (
-        (None, {'fields': ('photo', 'language', 'title', 'isEnabled', 'user', 'moderation_status')}),
+        (None, {'fields': ('photo', 'language', 'title', 'isEnabled', 'is_alcoholic', 'user', 'moderation_status')}),
         ('Информация', {'fields': ('video_url', 'description', 'instruction')}),
         ('Ингредиенты/Инструменты', {'fields': ('tools', )}),
     )
@@ -35,7 +35,7 @@ class RecipeAdmin(BaseAdmin):
         'isEnabled',
         'moderation_status'
     )
-    list_display = ('id', 'title', 'user', 'isEnabled', 'moderation_status', 'language')
+    list_display = ('id', 'title', 'user', 'isEnabled', 'is_alcoholic', 'moderation_status', 'language')
     search_fields = ('title', 'user__username', 'user__email', 'user__phone')
     ordering = ('id',)
     inlines = [RecipeIngredientInline]

@@ -118,7 +118,8 @@ class ToolSerializer(serializers.ModelSerializer):
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(source='recipe_ingredients', many=True)
-    tools = serializers.PrimaryKeyRelatedField(queryset=Tool.objects.all(), many=True, write_only=True)
+    tools = serializers.PrimaryKeyRelatedField(queryset=Tool.objects.all(), many=True, write_only=True),
+    is_alcoholic = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -132,14 +133,24 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             "video_url",
             "user",
             "tools",
+            'is_alcoholic'
         ]
+
+    def get_is_alcoholic(self, obj):
+        pass
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop('recipe_ingredients', [])
         tools_data = validated_data.pop('tools', [])
 
+        is_alcoholic = any(
+            ingredient_data['ingredient'].is_alcoholic
+            for ingredient_data in ingredients_data
+            if ingredient_data.get('ingredient')
+        )
+
         with transaction.atomic():
-            recipe = Recipe.objects.create(**validated_data)
+            recipe = Recipe.objects.create(**validated_data, is_alcoholic=is_alcoholic)
 
             for ingredient_data in ingredients_data:
                 ingredient = ingredient_data['ingredient']

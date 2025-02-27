@@ -73,13 +73,11 @@ class RecipeFilterSet(filters.FilterSet):
     def filter_alc(self, queryset, name, value):
         if value is True:
             # Рецепты с хотя бы одним алкогольным ингредиентом
-            queryset = queryset.filter(alcoholic_ingredients_count__gt=0)
-            queryset = queryset.annotate(popularity=Count('favorited_by'))
+            queryset = queryset.filter(is_alcoholic=True)
 
         elif value is False:
             # Рецепты без алкогольных ингредиентов
-            queryset = queryset.filter(alcoholic_ingredients_count=0)
-            queryset = queryset.annotate(popularity=Count('favorited_by'))
+            queryset = queryset.filter(is_alcoholic=False)
 
         return queryset
 
