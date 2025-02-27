@@ -137,7 +137,8 @@ class RecipeViewSet(LanguageFilterMixin, mixins.ListModelMixin, mixins.RetrieveM
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        return self.filter_by_language(queryset)
+        queryset = self.filter_by_language(queryset)
+        return queryset.annotate(popularity=Count('favorited_by'))
 
     def filter_for_selection(self, request, *args, **kwargs):
         main_ingredient = request.query_params.get('ingredients')

@@ -71,8 +71,13 @@ class RecipeFilterSet(filters.FilterSet):
         return queryset
 
     def filter_queryset(self, queryset):
-        queryset = queryset.annotate(popularity=Count('favorited_by'))
-        return super().filter_queryset(queryset)
+        queryset = super().filter_queryset(queryset)
+
+        if self.form.cleaned_data.get('ordering'):
+            ordering = self.form.cleaned_data['ordering']
+            queryset = queryset.order_by(*ordering)
+
+        return queryset
 
     def filter_alc(self, queryset, name, value):
         if value is None:
@@ -87,4 +92,4 @@ class RecipeFilterSet(filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ['q', 'ingredients', 'tools', 'ordering', 'alc']
+        fields = ['q', 'ingredients', 'tools', 'alc', 'ordering']
