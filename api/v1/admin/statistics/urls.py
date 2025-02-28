@@ -1,11 +1,7 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import AdminStatisticsViewSet
+from django.urls import path
 
-
-router = DefaultRouter()
-router.register(r'', AdminStatisticsViewSet, basename='admin-statistics')
+from .views import AdminStatisticsView
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', AdminStatisticsView.as_view(), name='admin-statistics'),
 ]
