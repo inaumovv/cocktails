@@ -3,7 +3,7 @@ from rest_framework import serializers
 from apps.recipe.models import Ingredient, IngredientCategory, IngredientCategorySection
 
 
-class IngredientCategorySerializer(serializers.ModelSerializer):
+class IngredientCategoryPreSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientCategory
         fields = ['id', 'name']
@@ -24,7 +24,7 @@ class AdminIngredientCategorySerializer(serializers.ModelSerializer):
 
 
 class AdminListIngredientCategorySectionSerializer(serializers.ModelSerializer):
-    categories = IngredientCategorySerializer(many=True)
+    categories = IngredientCategoryPreSerializer(many=True)
 
     class Meta:
         model = IngredientCategorySection
