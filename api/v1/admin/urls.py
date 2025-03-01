@@ -4,7 +4,6 @@ app_name = 'admin_api'
 
 urlpatterns = [
     path('goods/', include('api.v1.admin.goods.urls')),
-    path('recipe/', include('api.v1.admin.recipe.urls')),
     path('tool/', include('api.v1.admin.tool.urls')),
     path('ingredient/', include('api.v1.admin.ingredient.urls')),
     path('profile/', include('api.v1.admin.profile.urls')),
