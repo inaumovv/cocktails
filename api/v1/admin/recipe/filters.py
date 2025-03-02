@@ -10,6 +10,7 @@ class RecipeFilter(django_filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ('title', 'title'),
+            ('id', 'id'),
             ('video_url', 'video_url'),
             ('favorites_count', 'favorites_count'),
             ('is_alcoholic', 'is_alcoholic'),
@@ -17,6 +18,7 @@ class RecipeFilter(django_filters.FilterSet):
         ),
         field_labels={
             'title': 'Recipe title',
+            'id': 'Recipe ID',
             'video_url': 'Video exists',
             'favorites_count': 'Recipe Favorites count',
             'is_alcoholic': 'Alcoholic or not',
@@ -29,12 +31,15 @@ class RecipeFilter(django_filters.FilterSet):
         fields = []
 
     @staticmethod
-    def filter_q(queryset, name, value):
+    def filter_search(queryset, name, value):
         if not value:
             return queryset
 
         value_list = value.split()
         q = Q()
+
+        if value.isdigit():
+            q |= Q(id=value)
 
         for word in value_list:
             q |= Q(title__icontains=word) | Q(recipe_ingredients__ingredient__name__icontains=word)
