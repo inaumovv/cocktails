@@ -30,9 +30,14 @@ class AdminListRecipeSerializer(serializers.ModelSerializer):
     def get_favorites_count(self, obj: Recipe):
         return obj.favorited_by.count()
 
+    def get_ingredients(self, obj):
+        recipe_ingredients = RecipeIngredient.objects.filter(recipe=obj)
+        return AdminRecipeIngredientSerializer(recipe_ingredients, many=True).data
+
     class Meta:
         model = Recipe
         fields = [
+            'id',
             'title',
             'description',
             'instruction',
@@ -47,11 +52,6 @@ class AdminListRecipeSerializer(serializers.ModelSerializer):
             'moderation_status',
             'video_url',
         ]
-
-
-    def get_ingredients(self, obj):
-        recipe_ingredients = RecipeIngredient.objects.filter(recipe=obj)
-        return AdminRecipeIngredientSerializer(recipe_ingredients, many=True).data
 
 
 class AdminCreateRecipeSerializer(serializers.ModelSerializer):
