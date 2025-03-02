@@ -32,7 +32,21 @@ class AdminListRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = [
+            'title',
+            'description',
+            'instruction',
+            'isEnabled',
+            'photo',
+            'user',
+            'ingredients',
+            'tools',
+            'favorites_count',
+            'is_alcoholic',
+            'language',
+            'moderation_status',
+            'video_url',
+        ]
 
 
 class AdminCreateRecipeSerializer(serializers.ModelSerializer):
@@ -64,7 +78,20 @@ class AdminCreateRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = [
+            'title',
+            'description',
+            'instruction',
+            'isEnabled',
+            'photo',
+            'user',
+            'ingredients',
+            'tools',
+            'is_alcoholic',
+            'language',
+            'moderation_status',
+            'video_url',
+        ]
 
 
 class AdminUpdateRecipeSerializer(serializers.ModelSerializer):
@@ -73,15 +100,18 @@ class AdminUpdateRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = [
-            "id",
-            "ingredients",
-            "title",
-            "description",
-            "instruction",
-            "photo",
-            "video_url",
-            "user",
-            "tools",
+            'title',
+            'description',
+            'instruction',
+            'isEnabled',
+            'photo',
+            'user',
+            'ingredients',
+            'tools',
+            'is_alcoholic',
+            'language',
+            'moderation_status',
+            'video_url',
         ]
 
     def update(self, instance, validated_data):
