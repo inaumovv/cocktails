@@ -5,10 +5,9 @@ from api.v1.admin.ingredient.views import AdminIngredientViewSet, AdminIngredien
     AdminIngredientCategorySectionViewSet
 
 router = DefaultRouter()
-router.register(r'', AdminIngredientViewSet, basename='admin-ingredient')
-router.register(r'category-section', AdminIngredientCategorySectionViewSet,
-                basename='admin-ingredient-category-section')
+router.register(r'category-section', AdminIngredientCategorySectionViewSet, basename='admin-ingredient-category-section')
 router.register(r'category', AdminIngredientCategoryViewSet, basename='admin-ingredient-category')
+router.register(r'', AdminIngredientViewSet, basename='admin-ingredient')
 
 
 urlpatterns = [
