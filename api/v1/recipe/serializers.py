@@ -272,6 +272,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
             "tools",
             "missing_ingredients",
             "missing_ingredients_count",
+            "is_alcoholic"
         ]
 
     def get_is_favorite(self, obj):

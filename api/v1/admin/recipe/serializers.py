@@ -128,9 +128,9 @@ class AdminUpdateRecipeSerializer(serializers.ModelSerializer):
         for ingredient_data in ingredients_data:
             RecipeIngredient.objects.create(
                 recipe=instance,
-                ingredient_id=ingredient_data['ingredient']['id'],
-                quantity=ingredient_data['quantity'],
-                type=ingredient_data['type']
+                ingredient_id=ingredient_data.ingredient.id,
+                quantity=ingredient_data.quantity,
+                type=ingredient_data.type
             )
 
         return instance
