@@ -120,17 +120,18 @@ class AdminUpdateRecipeSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
-        ingredients_data = validated_data.pop('recipe_ingredients')
+        ingredients_data = validated_data.pop('recipe_ingredients', [])
         instance = super().update(instance, validated_data)
 
         instance.recipe_ingredients.all().delete()
+        print(ingredients_data)
 
         for ingredient_data in ingredients_data:
             RecipeIngredient.objects.create(
                 recipe=instance,
-                ingredient_id=ingredient_data.ingredient.id,
-                quantity=ingredient_data.quantity,
-                type=ingredient_data.type
+                ingredient=ingredient_data['ingredient'],
+                quantity=ingredient_data['quantity'],
+                type=ingredient_data['type']
             )
 
         return instance
