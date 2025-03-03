@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.base.permissions import IsActiveUser
-from api.v1.admin.promo.filters import PromoFilter
+from api.v1.admin.promo.filters import PromoFilter, PurchasedPromoFilter
 from api.v1.admin.promo.serializers import AdminPromoSerializer, AdminPurchasedPromoSerializer
 from api.v1.admin.promo.swagger import purchased_promo_get, purchased_promo_post, search, promo
 from apps.goods.models import Promo, PurchasedPromo
@@ -37,7 +37,7 @@ class PromoPurchasedAdminViewSet(
     viewsets.GenericViewSet
 ):
     pagination_class = BasePagination
-    filterset_class = PromoFilter
+    filterset_class = PurchasedPromoFilter
     queryset = PurchasedPromo.objects.all()
 
     @swagger_auto_schema(manual_parameters=[search, promo], **purchased_promo_get)

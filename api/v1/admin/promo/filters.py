@@ -50,7 +50,7 @@ class PurchasedPromoFilter(django_filters.FilterSet):
     )
 
     class Meta:
-        model = Promo
+        model = PurchasedPromo
         fields = []
 
     def filter_search(self, queryset, name, value):
