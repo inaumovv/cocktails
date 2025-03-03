@@ -10,12 +10,10 @@ class PointFilter(django_filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ('email', 'email'),
-            ('total_points', 'total_points'),
             ('id', 'id'),
         ),
         field_labels={
             'email': 'User email',
-            'total_points': 'User total points',
             'id': 'User ID',
         }
     )
@@ -36,3 +34,4 @@ class PointFilter(django_filters.FilterSet):
             query |= Q(id=value)
 
         return queryset.filter(query)
+

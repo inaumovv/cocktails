@@ -11,13 +11,11 @@ class PromoFilter(django_filters.FilterSet):
         fields=(
             ('name', 'name'),
             ('price', 'price'),
-            ('how_much_purchased', 'how_much_purchased'),
             ('id', 'id'),
         ),
         field_labels={
             'name': 'Promo name',
             'price': 'Promo price',
-            'how_much_purchased': 'how much purchased promo',
             'id': 'Promo ID',
         }
     )
