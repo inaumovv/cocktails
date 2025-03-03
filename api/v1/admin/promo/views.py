@@ -37,20 +37,14 @@ class PromoPurchasedAdminViewSet(
     viewsets.GenericViewSet
 ):
     pagination_class = BasePagination
+    filterset_class = PromoFilter
     queryset = PurchasedPromo.objects.all()
 
     @swagger_auto_schema(manual_parameters=[search, promo], **purchased_promo_get)
     def list(self, request):
-        search_query = request.query_params.get('search')
         promo_id = request.query_params.get('promo')
 
         queryset = PurchasedPromo.objects.filter(promo_id=promo_id)
-
-        if search_query:
-            queryset = queryset.filter(
-                Q(user_id=search_query) |
-                Q(purchased_at__icontains=search_query)
-            )
 
         serializer = AdminPurchasedPromoSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

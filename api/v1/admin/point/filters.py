@@ -1,4 +1,5 @@
 import django_filters
+from django_filters import rest_framework as filters
 from django.db.models import Q
 
 from apps.user.models import Point, User
@@ -6,6 +7,18 @@ from apps.user.models import Point, User
 
 class PointFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='filter_search')
+    ordering = filters.OrderingFilter(
+        fields=(
+            ('email', 'email'),
+            ('total_points', 'total_points'),
+            ('id', 'id'),
+        ),
+        field_labels={
+            'email': 'User email',
+            'total_points': 'User total points',
+            'id': 'User ID',
+        }
+    )
 
     class Meta:
         model = User

@@ -11,11 +11,13 @@ class ToolFilter(django_filters.FilterSet):
         fields=(
             ('name', 'name'),
             ('description', 'description'),
+            ('language', 'language'),
             ('id', 'id'),
         ),
         field_labels={
             'name': 'Tool name',
             'description': 'Tool description',
+            'language': 'Tool language',
             'id': 'Tool id',
         }
     )
